@@ -5,34 +5,31 @@ from selenium.webdriver.support import expected_conditions as EC # available sin
 import time
 
 URL = "https://cas.tamu.edu/cas/login?service=https://howdy.tamu.edu/uPortal/Login&renew=true"
-username = ""
-password = "$"
+username = "yahirb"
+password = "2085353Yb$"
+department = "CSCE"
+course_number = "420"
 
 # Create a new instance of the ChromeDriver driver
 #driver = webdriver.Chrome('/Users/yahir/Downloads/chromedriver' )
 
 # Headless Browser
 driver = webdriver.PhantomJS()
-try:
-
+def start(URL):
     # go to the howdy home page
     driver.get(URL)
-
+def login():
     # find the element that's ID attribute is username (the username box)
     inputElement = driver.find_element_by_id("username")
-
     # type in the username
     inputElement.send_keys(username)
-
     # find the element that's ID attribute is password (the password box)
     inputElement = driver.find_element_by_id("password")
-
     # type in the password
     inputElement.send_keys(password)
-
     # submit the form (although google automatically searches now without submitting)
     inputElement.submit()
-
+def search(department,course_number):
     # find the element that's ID attribute is tabLink_u42l1s10 (the 'My Record' box)
     inputElement = driver.find_element_by_id("tabLink_u42l1s10")
 
@@ -52,7 +49,7 @@ try:
     elem.submit()
 
     ### find the correct department, i.e. "CSCE"
-    element = driver.find_element_by_xpath("//*[@id='subj_id']/option[@value='CSCE']")
+    element = driver.find_element_by_xpath("//*[@id='subj_id']/option[@value='" + department + "']")
     element.click()
     element = driver.find_element_by_xpath("//*[@id='courseBtnDiv']/input[2]")
     element.click()
@@ -64,7 +61,7 @@ try:
     elements.pop(0) # removes the first useless element of list
 
     for e in elements: # finds course number row
-        if (e.find_elements_by_tag_name("td")[1].text == "411"):
+        if (e.find_elements_by_tag_name("td")[1].text == course_number):
             element = e
     element = element.find_elements_by_tag_name("td")[3]
     element = element.find_element_by_tag_name("form")
@@ -95,7 +92,12 @@ try:
         active = columns[11].text
         remaining = columns[12].text
         instructor = columns[13].find_element_by_tag_name("a").text
+        print (section_status)
 
+try:
+    start(URL)
+    login()
+    search(department,course_number)
 
 except TimeoutException:
     print ("Timed out waiting for page to load")
